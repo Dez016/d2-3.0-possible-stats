@@ -1,9 +1,13 @@
 import numpy as np
+import pyarrow
 import csv
+import os
+from interpreter import convert
+import pandas as pd
 
 #health, melee, grenade, supe, clas, weapons 
 
-def fitExoArmorStats(request):
+def fitExoArmor(request):
     requested = np.array(request).astype(int)
 
     print(requested)
@@ -15,47 +19,52 @@ def fitExoArmorStats(request):
     padding = []
 
     combos = []
-    legend = []
 
-    with open('4pcexo.csv', newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            combos.append(row)
+    if os.path.exists('5pcexo.feather'):
+        combos = pd.read_feather('5pcexo.feather')
+        print("exists")
+    else:
+        dtype = {f'col{i}': int for i in range(1, 6)}
+        dtype.update({f'col{i}': float for i in range(7, 11)})
+        combos = pd.read_table('exotics_culled.csv', sep=',', header=None, dtype = dtype)
 
-    npos = np.array(combos)
+        combos.to_feather('5pcexo.feather')
+
+    npos = combos.to_numpy()
+    
     stats = npos[:, :6].astype(int)
-    legend = npos[:, -5:]
+    legend = npos[:, -5:].tolist()
 
-    print(stats)
+    # print(stats)
+    # #print(legend)
 
-    for i in range(len(stats)):
-        stats[i] = stats[i]-adjusted
+    stats = stats-adjusted
 
     stats = np.clip(stats, None, 0)
 
-    print(stats)
     
-    for i in range(len(stats)):
-        if (-(np.sum(stats[i])) < lenience):
-            
-            split = [term.split('/') for term in legend[i]]
-            output = [0] * 37
+    sums = -np.sum(stats, axis = 1)
 
-            exo_arch = split[0]
-            output[36] = (int(exo_arch[0])-1)*6 + int(exo_arch[1]) - 1 #SAME THING as BELOW
+    valid = np.where(lenience >= sums)[0]\
 
-            for j in range(len(split)-1):
-                index = (int(split[-1-j][0])-1) * 6 + int(split[-1-j][1]) - 1 #I THINK THIS INDEX WORKS
-                print(split[-1-j])
-                print(index)
-                output[index] = output[index] + 1
-            
-            if (not (output in possibilities)):
-                possibilities.append(output)
-                padding.append(-stats[i])
+    for i in valid: 
+        output = [0] * 37
+
+        split = [term.split('/') for term in legend[i]]
+
+        exo_arch = split[0]
+        output[36] = (int(exo_arch[0])-1)*6 + int(exo_arch[1]) - 1
+
+        for k in range(len(split)-1):
+            j = k+1
+            index = (int(split[j][0])-1) * 6 + int(split[j][1]) - 1 #I THINK THIS INDEX WORKS
+            output[index] = output[index] + 1
+
+        possibilities.append(output)  
+        padding.append(-stats[i])
 
     print(possibilities)
     return possibilities, padding
 
 
-#fitExoArmorStats([0,70,170,0,70,0])
+#fitExoArmor([0,70,170,0,70,0])

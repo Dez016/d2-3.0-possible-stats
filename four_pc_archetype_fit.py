@@ -19,7 +19,7 @@ def fitStats(request, exoti):
     combos = []
     legend = []
 
-    with open('4pc.csv', newline='') as csvfile:
+    with open('4pc_culled.csv', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             combos.append(row)

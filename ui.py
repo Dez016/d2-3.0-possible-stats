@@ -1,6 +1,6 @@
 from four_pc_archetype_fit import fitStats
 from five_pc_leg_fit import fitLegArmor
-from five_pc_exotic_fit import fitExoArmorStats
+from five_pc_exotic_fit import fitExoArmor
 from interpreter import convert, convertExo
 import tkinter as tk
 from tkinter import scrolledtext
@@ -132,7 +132,7 @@ def open_normal_exotic_window():
         print("STOPPPING")
         print("Request:", request)
 
-        pieces, padding = fitExoArmorStats(request)
+        pieces, padding = fitExoArmor(request)
         for i in range(len(pieces)):
             output.append(convertExo(pieces[i]))
             output.append(list(map(str, padding[i])))
