@@ -63,4 +63,4 @@ def fitLegArmor(request):
     return possibilities, padding
 
 
-fitLegArmor([0,80,200,125,70,0])
+#fitLegArmor([0,80,200,125,70,0])
