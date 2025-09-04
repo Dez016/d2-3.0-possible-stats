@@ -23,13 +23,14 @@ class EditableValue(ttk.Frame):
         self.entry.bind("<FocusOut>", self.finish_edit)
         
         self.slider.configure(command=self.update_label)
-        # Bind click to move slider handle
-        self.slider.bind("<Button-1>", self.jump_to_click)
+        self.slider.bind("<Button-1>", self.on_click)
         
+        self.dragging = False
+
     def update_label(self, val):
         if not self.entry.winfo_ismapped():
             self.value_var.set(str(int(float(val))))
-        
+
     def start_edit(self, event):
         self.entry.delete(0, tk.END)
         self.entry.insert(0, self.value_var.get())
@@ -37,43 +38,69 @@ class EditableValue(ttk.Frame):
         self.entry.pack()
         self.entry.focus()
         self.entry.selection_range(0, tk.END)
-        
+
     def finish_edit(self, event):
         try:
             val = int(self.entry.get())
         except ValueError:
             val = int(self.slider.get())
-        
+
         val = max(0, min(200, val))
-        
+
         self.slider.set(val)
         self.value_var.set(str(val))
-        
+
         self.entry.pack_forget()
         self.label.pack()
-    
-    def jump_to_click(self, event):
-        # Calculate relative x within the slider widget
+
+    def on_click(self, event):
         slider_length = self.slider.winfo_width()
         click_x = event.x
-        
-        # Clamp click_x
+
         if click_x < 0:
             click_x = 0
         elif click_x > slider_length:
             click_x = slider_length
-        
-        # Calculate proportion (0 to 1)
+
+        from_, to_ = float(self.slider.cget("from")), float(self.slider.cget("to"))
         proportion = click_x / slider_length
-        
-        # Calculate value in slider range
-        from_, to_ = self.slider.cget("from"), self.slider.cget("to")
-        value = float(from_) + proportion * (float(to_) - float(from_))
-        
+        value = from_ + proportion * (to_ - from_)
+
         self.slider.set(value)
         self.update_label(value)
-        
-        # Prevent event from moving slider again on drag start
+
+        # Start dragging from this point:
+        self.dragging = True
+        self.slider.bind("<B1-Motion>", self.on_drag)
+        self.slider.bind("<ButtonRelease-1>", self.on_release)
+
+        return "break"  # Stop native drag to control it manually
+
+    def on_drag(self, event):
+        if not self.dragging:
+            return
+
+        slider_length = self.slider.winfo_width()
+        drag_x = event.x
+
+        if drag_x < 0:
+            drag_x = 0
+        elif drag_x > slider_length:
+            drag_x = slider_length
+
+        from_, to_ = float(self.slider.cget("from")), float(self.slider.cget("to"))
+        proportion = drag_x / slider_length
+        value = from_ + proportion * (to_ - from_)
+
+        self.slider.set(value)
+        self.update_label(value)
+
+        return "break"
+
+    def on_release(self, event):
+        self.dragging = False
+        self.slider.unbind("<B1-Motion>")
+        self.slider.unbind("<ButtonRelease-1>")
         return "break"
 
 
