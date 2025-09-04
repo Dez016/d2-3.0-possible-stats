@@ -1,2 +1,1 @@
-The 5-piece options are pretty slow (inefficient) right now, and I intend on speeding it up sometime
-^ I made it way faster. I was being kind of dumb before
+Class item dropdown menu will come in the future, after I log every perk. D2armorpicker sliders also might come in the future, depending on how smooth I can make it.
