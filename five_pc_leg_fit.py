@@ -59,7 +59,7 @@ def fitLegArmor(request):
         possibilities.append(output)  
         padding.append(-stats[i])
 
-    print(possibilities)
+    #print(possibilities)
     return possibilities, padding
 
 

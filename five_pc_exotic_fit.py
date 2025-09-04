@@ -10,7 +10,7 @@ import pandas as pd
 def fitExoArmor(request):
     requested = np.array(request).astype(int)
 
-    print(requested)
+    #print(requested)
 
     adjusted = requested
     lenience = 20+50
@@ -63,7 +63,7 @@ def fitExoArmor(request):
         possibilities.append(output)  
         padding.append(-stats[i])
 
-    print(possibilities)
+    #print(possibilities)
     return possibilities, padding
 
 
