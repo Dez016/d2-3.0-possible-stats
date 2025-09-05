@@ -7,4 +7,5 @@ __pycache__/
 unnecessay/
 csvculling.py
 pmo.py
-classtostat.py
+classtostat/
+fasf

@@ -45,7 +45,7 @@ def fitLegArmor(request):
     
     sums = -np.sum(stats, axis = 1)
 
-    valid = np.where(lenience >= sums)[0]\
+    valid = np.where(lenience >= sums)[0]
 
     for i in valid: 
         output = [0] * 36

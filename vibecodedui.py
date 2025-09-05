@@ -5,6 +5,7 @@ from four_pc_archetype_fit import fitStats
 from five_pc_leg_fit import fitLegArmor
 from five_pc_exotic_fit import fitExoArmor
 from interpreter import convert, convertExo
+from classtostat import classitemtostats
 
 class EditableValue(ttk.Frame):
     def __init__(self, parent, slider, *args, **kwargs):
@@ -183,16 +184,60 @@ class SliderUI(tk.Tk):
         self.dropdown_widgets.clear()
         self.dropdown_vars.clear()
 
-        ttk.Label(self.dropdown_frame, text="Exotic Stats:").grid(row=0, column=0, columnspan=6, sticky="w", pady=(0, 5))
+        ttk.Label(self.dropdown_frame, text="Select Options:").grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 5))
 
-        self.dropdown_vars["exostats"] = []
+        # Define options for the first dropdown
+        options_3 = ["Warlock", "Titan", "Hunter"]
+        
+        # Define dependent options for the second and third dropdowns based on first dropdown selection
+        dependent_options = {
+            "Warlock": {
+                "second": ["Spirit of the Assassin", "Spirit of Inmost Light", "Spirit of the Ophidian", "Spirit of the Stag", "Spirit of the Filament", "Spirit of the Necrotic", "Spirit of Osmiomancy", "Spirit of Apotheosis"],
+                "third": ["Spirit of the Star-Eater", "Spirit of Synthoceps", "Spirit of Verity", "Spirit of Vesper", "Spirit of Harmony", "Spirit of Starfire", "Spirit of the Swarm", "Spirit of the Claw"],
+            },
+            "Titan": {
+                "second": ["Spirit of the Assassin", "Spirit of Inmost Light", "Spirit of the Ophidian", "Spirit of Severance", "Spirit of Hoarfrost", "Spirit of the Eternal Warrior", "Spirit of the Abeyant", "Spirit of the Bear"],
+                "third": ["Spirit of the Star-Eater", "Spirit of Synthoceps", "Spirit of Verity", "Spirit of Contact", "Spirit of Scars", "Spirit of the Horn", "Spirit of Alpha Lupi", "Spirit of the Armamentarium"],
+            },
+            "Hunter": {
+                "second": ["Spirit of the Assassin", "Spirit of Inmost Light", "Spirit of the Ophidian", "Spirit of the Dragon", "Spirit of Galanor", "Spirit of the Foetracer", "Spirit of Caliban", "Spirit of Renewal"],
+                "third": ["Spirit of the Star-Eater", "Spirit of Synthoceps", "Spirit of Verity", "Spirit of the Cyrtarachne", "Spirit of the Gyrfalcon", "Spirit of the Liar", "Spirit of the Wormhusk", "Spirit of the Coyote"],
+            }
+        }
 
-        for i in range(6):
-            var = tk.StringVar(value="0")
-            entry = ttk.Entry(self.dropdown_frame, width=4, justify="center", textvariable=var)
-            entry.grid(row=1, column=i, padx=3)
-            self.dropdown_vars["exostats"].append(var)
-            self.dropdown_widgets.append(entry)
+        # First dropdown
+        var1 = tk.StringVar(value=options_3[0])
+        dropdown1 = ttk.Combobox(self.dropdown_frame, values=options_3, textvariable=var1, state="readonly", width=12)
+        dropdown1.grid(row=1, column=0, padx=5)
+        self.dropdown_vars["first"] = var1
+        self.dropdown_widgets.append(dropdown1)
+
+        # Second dropdown (initial values set based on first dropdown's default)
+        var2 = tk.StringVar(value=dependent_options[options_3[0]]["second"][0])
+        dropdown2 = ttk.Combobox(self.dropdown_frame, values=dependent_options[options_3[0]]["second"], textvariable=var2, state="readonly", width=12)
+        dropdown2.grid(row=1, column=1, padx=5)
+        self.dropdown_vars["second"] = var2
+        self.dropdown_widgets.append(dropdown2)
+
+        # Third dropdown (initial values set based on first dropdown's default)
+        var3 = tk.StringVar(value=dependent_options[options_3[0]]["third"][0])
+        dropdown3 = ttk.Combobox(self.dropdown_frame, values=dependent_options[options_3[0]]["third"], textvariable=var3, state="readonly", width=12)
+        dropdown3.grid(row=1, column=2, padx=5)
+        self.dropdown_vars["third"] = var3
+        self.dropdown_widgets.append(dropdown3)
+
+        def update_dependent_dropdowns(event=None):
+            selected = var1.get()
+            # Update second dropdown
+            dropdown2['values'] = dependent_options[selected]["second"]
+            var2.set(dependent_options[selected]["second"][0])
+            # Update third dropdown
+            dropdown3['values'] = dependent_options[selected]["third"]
+            var3.set(dependent_options[selected]["third"][0])
+
+        # Bind selection change on first dropdown
+        dropdown1.bind("<<ComboboxSelected>>", update_dependent_dropdowns)
+
 
     def hide_dropdowns(self):
         for widget in self.dropdown_widgets:
@@ -214,16 +259,17 @@ class SliderUI(tk.Tk):
         stats = [int(self.sliders[label].get()) for label in ["health", "melee", "grenade", "super", "class", "weapons"]]
         
         if self.selected_button == "Exotic Class":
-            exo_vars = self.dropdown_vars.get("exostats", [])
-            exostats = []
-            for var in exo_vars:
-                try:
-                    val = int(var.get())
-                except ValueError:
-                    val = 0
-                exostats.append(max(5, val)) # at least 5
+            second_val = self.dropdown_vars.get("second")
+            third_val = self.dropdown_vars.get("third")
+            print(second_val.get(), third_val.get())
+            exostats = classitemtostats(second_val.get(), third_val.get())
+            print(exostats)
 
-            result = self.func_exotic_class(stats, exostats)
+            if isinstance(exostats, str):
+                result = exostats
+            else: 
+                result = self.func_exotic_class(stats, exostats)
+                
         elif self.selected_button == "Exotic Armor":
             result = self.func_exotic_armor(stats)
         elif self.selected_button == "No Exotic":
