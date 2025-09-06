@@ -1,9 +1,9 @@
 exoticbruteforce/
 testing.py
 __pycache__/
-5pc.feather
-4pc.feather
-5pcexo.feather
+5pc_culled.csv
+4pc_culled.csv
+exotics_culled.csv
 unnecessay/
 csvculling.py
 pmo.py
