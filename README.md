@@ -5,4 +5,4 @@ Some class item rolls are extrapolated, so if you notice the program's class ite
 (ty aegis for giving me his class item stash's stats)
 (ty spidereviver for his class item stat breakdown)
 
-To run, run statfinder.exe
+To run, run d2statfinder.exe
