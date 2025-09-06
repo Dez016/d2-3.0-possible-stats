@@ -8,12 +8,14 @@ import pandas as pd
 #health, melee, grenade, supe, clas, weapons 
 
 def fitLegArmor(request):
+    #basically copies five_pc_exotic_fit.py, without the exotic storage. comments are on that file
+
     requested = np.array(request).astype(int)
 
     print(requested)
 
     adjusted = requested
-    lenience = 25+50
+    lenience = 25+50            
 
     possibilities = []
     padding = []
@@ -57,7 +59,7 @@ def fitLegArmor(request):
             output[index] = output[index] + 1
 
         possibilities.append(output)  
-        padding.append(-stats[i])
+        padding.append((-stats[i]).tolist())
 
     #print(possibilities)
     return possibilities, padding

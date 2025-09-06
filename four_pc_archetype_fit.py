@@ -7,13 +7,15 @@ import pandas as pd
 #health, melee, grenade, supe, clas, weapons 
 
 def fitStats(request, exoti):
+    #basically copies five_pc_exotic_fit.py, except exotic is removed from the request initially. comments are on that file
+
     requested = np.array(request).astype(int)
     exotic = np.array(exoti).astype(int)
 
     print(requested)
     print(exotic)
 
-    adjusted = np.clip((requested - exotic), 0, None)
+    adjusted = np.clip((requested - exotic), 0, None)       #reduces requirement according to class item roll and removes negatives
     lenience = 20+50
 
     possibilities = []
@@ -55,7 +57,7 @@ def fitStats(request, exoti):
             output[index] = output[index] + 1
 
         possibilities.append(output)  
-        padding.append(-stats[i])
+        padding.append((-stats[i]).tolist())
 
     #print(possibilities)
     return possibilities, padding

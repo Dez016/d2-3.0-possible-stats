@@ -1,11 +1,30 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext
+import numpy
 
 from four_pc_archetype_fit import fitStats
 from five_pc_leg_fit import fitLegArmor
 from five_pc_exotic_fit import fitExoArmor
 from interpreter import convert, convertExo
 from classtostat import classitemtostats
+
+def sorter(tuple):
+        possibilties, padding = tuple
+
+        sorted = [[] for _ in range(75)]
+        output = []
+        
+        paddings = numpy.array(padding)
+        sums = numpy.sum(paddings.astype(int), axis = 1)
+
+        for i in range(len(sums)):
+            sorted[sums[i]-1].append((possibilties[i], paddings[i]))
+
+        for row in sorted:
+            for pair in row:
+                output.append(pair)
+        
+        return output
 
 class EditableValue(ttk.Frame):
     def __init__(self, parent, slider, *args, **kwargs):
@@ -284,37 +303,36 @@ class SliderUI(tk.Tk):
 
     def func_exotic_class(self, stats, exostats):
         output = []
-        #make a switch between every exotic thing later; ts is pmoing
 
-        possibilties, padding = fitStats(stats, exostats)
-        for i in range(len(possibilties)):
-            output.append(convert(possibilties[i]))
-            output.append(padding[i].tolist()
-)
+        sorted = sorter(fitStats(stats, exostats))
+        
+        for poss, pad in sorted:
+            output.append(convert(poss))
+            output.append(pad.tolist())
         return output
     
     def func_exotic_armor(self, stats):
         output = []
-        possibilties, padding = fitExoArmor(stats)
-        for i in range(len(possibilties)):
-            output.append(convertExo(possibilties[i]))
-            output.append(padding[i].tolist())
+        sorted = sorter(fitExoArmor(stats))
+        for poss, pad in sorted:
+            output.append(convertExo(poss))
+            output.append(pad.tolist())
         return output
     
     def func_no_exotic(self, stats):
         output = []
-        possibilties, padding = fitLegArmor(stats)
-        for i in range(len(possibilties)):
-            output.append(convert(possibilties[i]))
-            output.append(padding[i].tolist()
-)
+        sorted = sorter(fitLegArmor(stats))
+        
+        for poss, pad in sorted:
+            output.append(convert(poss))
+            output.append(pad.tolist())
         return output
 
 if __name__ == "__main__":
     app = SliderUI()
     app.mainloop()
 
-import tkinter as tk
-from tkinter import scrolledtext
+    
+    
 
 

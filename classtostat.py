@@ -74,18 +74,19 @@ def classitemtostats(first, second):
 
     unknown = True
 
-    arch_case[arch_dict.get(first)]()
+    arch_case[arch_dict.get(first)]() #dictionary on 1st spirit -> dictionary w/ lambda function
 
-    terts = tert_dict.get(second)
+    terts = tert_dict.get(second) #dict on 2nd spirit
 
-    for i in terts:
+    # place tertiary in unused spot by priority (order in array)
+    for i in terts: 
         print(stats.get(i))
         if (int(stats.get(i)) == 5):
             stats[i] = 13
             unknown = False
             break
 
-    if unknown:
+    if unknown: 
         return "unknown combo. if you have this class item combo please dm its stat split to dezedz on discord"
     else:
         return list(stats.values())

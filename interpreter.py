@@ -1,6 +1,8 @@
 
 def convert(archArray):
     archetypes = []
+
+    #converts index back into archetype + tertiary
     for i in range(len(archArray)):
         if int(archArray[i]) > 0:
             tertin = (i)% 6 + 1

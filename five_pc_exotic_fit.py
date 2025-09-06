@@ -13,13 +13,14 @@ def fitExoArmor(request):
     #print(requested)
 
     adjusted = requested
-    lenience = 20+50
+    lenience = 20+50         #mods and tunings, varies
 
     possibilities = []
     padding = []
 
     combos = []
 
+    #creating a faster file if needed
     if os.path.exists('5pcexo.feather'):
         combos = pd.read_feather('5pcexo.feather')
         print("exists")
@@ -32,12 +33,15 @@ def fitExoArmor(request):
 
     npos = combos.to_numpy()
     
+    # data comes as stat totals and archetypes, splitting array into respective categories
     stats = npos[:, :6].astype(int)
     legend = npos[:, -5:].tolist()
 
     # print(stats)
     # #print(legend)
 
+
+    # get indices that have gaps between requested and stat smaller than lenience (mods+tunings)
     stats = stats-adjusted
 
     stats = np.clip(stats, None, 0)
@@ -45,8 +49,9 @@ def fitExoArmor(request):
     
     sums = -np.sum(stats, axis = 1)
 
-    valid = np.where(lenience >= sums)[0]\
+    valid = np.where(lenience >= sums)[0]
 
+    # convert each archetype into a unique number, exotics stored on first spot
     for i in valid: 
         output = [0] * 37
 
@@ -61,7 +66,7 @@ def fitExoArmor(request):
             output[index] = output[index] + 1
 
         possibilities.append(output)  
-        padding.append(-stats[i])
+        padding.append((-stats[i]).tolist())
 
     #print(possibilities)
     return possibilities, padding
