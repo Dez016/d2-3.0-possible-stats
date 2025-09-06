@@ -11,6 +11,9 @@ from classtostat import classitemtostats
 def sorter(tuple):
         possibilties, padding = tuple
 
+        if not possibilties:
+            return []
+
         sorted = [[] for _ in range(75)]
         output = []
         

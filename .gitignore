@@ -12,3 +12,5 @@ fasf
 dist/
 vibecodedui.py
 vibecodedui.exe
+build/
+vibecodedui.spec

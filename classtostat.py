@@ -12,9 +12,9 @@ tert_dict = {
     "Spirit of the Claw": ["m","h","c"],
 
     "Spirit of the Cyrtarachne": ["g","h"],
-    "Spirit of the Gyrfalcon": ["w","c"], #drag gyr case unaccounted for
+    "Spirit of the Gyrfalcon": ["w","c","m"], 
     "Spirit of the Liar": ["m","h","c"],
-    "Spirit of the Wormhusk": ["c"], #drag husk case unknown
+    "Spirit of the Wormhusk": ["c", "m"], #drag husk case unknown -> technically not but sus source?
     "Spirit of the Coyote": ["c","m"],
 
     "Spirit of Contact": ["m","h","g"],
