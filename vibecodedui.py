@@ -14,14 +14,14 @@ def sorter(tuple):
         if not possibilties:
             return []
 
-        sorted = [[] for _ in range(75)]
+        sorted = [[] for _ in range(76)]
         output = []
         
         paddings = numpy.array(padding)
         sums = numpy.sum(paddings.astype(int), axis = 1)
 
         for i in range(len(sums)):
-            sorted[sums[i]-1].append((possibilties[i], paddings[i]))
+            sorted[sums[i]].append((possibilties[i], paddings[i]))
 
         for row in sorted:
             for pair in row:
